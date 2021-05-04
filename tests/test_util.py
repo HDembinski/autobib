@@ -1,6 +1,7 @@
 from autobib import util
 from pathlib import Path
 import pytest
+import shutil
 
 cwd = Path(__file__).parent
 test_document_path = cwd / "test_document"
@@ -22,3 +23,23 @@ def test_scan_aux():
 
     assert bib_files == {test_document_path / "main.bib"}
     assert citations == {"Aab:2021zfr"}
+
+
+def test_replace_bib_files(tmpdir):
+    bib = test_document_path / "main.bib"
+    with open(bib) as f:
+        db_ref = util.load(f)
+
+    shutil.copy(bib, tmpdir / "main.bib")
+    bib = tmpdir / "main.bib"
+
+    autobib_backup = tmpdir / "main.bib-autobib-backup"
+    assert not autobib_backup.exists()
+
+    with util.replace_bib_files({bib}, {}):
+        pass
+
+    assert autobib_backup.exists()
+
+    with open(bib) as f:
+        assert util.load(f) == db_ref

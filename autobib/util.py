@@ -1,8 +1,10 @@
 from pathlib import Path
-import shutil
 import os
 import re
 from typing import Dict, Set
+from .load import load
+from .dump import dump
+from contextlib import contextmanager
 
 
 def get_aux_path(input_path: Path) -> Path:
@@ -33,9 +35,19 @@ def scan_aux(aux: Path) -> (Set[Path], Set):
     return bib_files, citations
 
 
+@contextmanager
 def replace_bib_files(bib_files: Set[Path], db: Dict):
-
     for bib in bib_files:
         if bib.exists():
-            shutil.move(bib, bib + ".autobib-backup")
+            db.update(load(bib))
+            bib.rename(bib.with_suffix(".bib-autobib-backup"))
         os.mkfifo(bib)
+    yield
+    for bib in bib_files:
+        bib.unlink()
+        with open(bib, "w") as f:
+            if db:
+                dump(db, f)
+                db = {}
+            else:
+                f.write("")
