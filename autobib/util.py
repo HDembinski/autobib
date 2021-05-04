@@ -39,7 +39,8 @@ def scan_aux(aux: Path) -> (Set[Path], Set):
 def replace_bib_files(bib_files: Set[Path], db: Dict):
     for bib in bib_files:
         if bib.exists():
-            db.update(load(bib))
+            with open(bib) as f:
+                db.update(load(f))
             bib.rename(bib.with_suffix(".bib-autobib-backup"))
         os.mkfifo(bib)
     yield

@@ -4,7 +4,7 @@ import pytest
 import shutil
 
 cwd = Path(__file__).parent
-test_document_path = cwd / "test_document"
+test_document_path = cwd / "data"
 aux_path = test_document_path / "main.aux"
 
 
@@ -31,9 +31,9 @@ def test_replace_bib_files(tmpdir):
         db_ref = util.load(f)
 
     shutil.copy(bib, tmpdir / "main.bib")
-    bib = tmpdir / "main.bib"
+    bib = Path(tmpdir / "main.bib")
 
-    autobib_backup = tmpdir / "main.bib-autobib-backup"
+    autobib_backup = Path(tmpdir / "main.bib-autobib-backup")
     assert not autobib_backup.exists()
 
     with util.replace_bib_files({bib}, {}):
