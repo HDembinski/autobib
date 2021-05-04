@@ -1,5 +1,4 @@
 from pathlib import Path
-import os
 import re
 from typing import Dict, Set, List
 from .load import load
@@ -64,11 +63,9 @@ def replace_bib_files(bib_files: List[Path], db: Dict):
             bib.rename(bib.with_suffix(".bib-autobib-backup"))
         if first is None:
             first = bib
-            os.mkfifo(first)
         else:
             with open(bib, "w") as f:
                 f.write("")
     yield
-    first.unlink()
     with open(first, "w") as f:
         dump(db, f)

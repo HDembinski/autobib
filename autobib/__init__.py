@@ -14,7 +14,7 @@ def main():
     aux = util.get_aux_path(args.input_path.absolute())
     assert aux.exists(), aux
 
-    aux_time = aux.stat().st_mtime
+    aux_time = 0
 
     bib_files = util.get_aux_bibdata(aux)
 
