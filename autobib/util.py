@@ -5,6 +5,8 @@ from typing import Dict, Set, List
 from .load import load
 from .dump import dump
 from contextlib import contextmanager
+import requests
+import bibtexparser
 
 
 def get_aux_path(input_path: Path) -> Path:
@@ -42,6 +44,14 @@ def get_aux_citations(aux: Path) -> Set:
         txt = f.read()
         citations = set(re.findall(r"\\citation{([^}]+)}", txt))
     return citations
+
+
+def get_entry_online(key) -> Dict:
+    # https://github.com/inspirehep/rest-api-doc
+    r = requests.get(
+        "https://inspirehep.net/api/literature", params={"q": key, "format": "bibtex"}
+    )
+    return bibtexparser.loads(r.content).entries[0]
 
 
 @contextmanager

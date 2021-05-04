@@ -11,16 +11,18 @@ def main():
     parser.add_argument("input_path", type=Path)
     args = parser.parse_args()
 
-    aux = util.get_aux_path(args.input_path)
-    aux_time = aux.stats().st_mtime
+    aux = util.get_aux_path(args.input_path.absolute())
+    assert aux.exists(), aux
 
-    bib_files, citations = util.scan_aux(aux)
+    aux_time = aux.stat().st_mtime
+
+    bib_files = util.get_aux_bibdata(aux)
 
     db = {}
     with util.replace_bib_files(bib_files, db):
         bib = bib_files[0]
         while True:
-            t = aux.stats().st_mtime
+            t = aux.stat().st_mtime
             if t > aux_time:
                 citations = util.get_aux_citations(aux)
                 for c in citations:

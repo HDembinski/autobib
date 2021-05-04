@@ -30,6 +30,13 @@ def test_get_aux_citations():
     assert citations == {"Aab:2021zfr"}
 
 
+def test_get_entry_online():
+    key = "Aab:2021zfr"
+
+    entry = util.get_entry_online(key)
+    assert entry["collaboration"] == "Pierre Auger"
+
+
 def test_replace_bib_files(tmpdir):
     bib = test_document_path / "main.bib"
     with open(bib) as f:
