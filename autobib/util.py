@@ -1,7 +1,7 @@
 from pathlib import Path
 import os
 import re
-from typing import Dict, Set
+from typing import Dict, Set, List
 from .load import load
 from .dump import dump
 from contextlib import contextmanager
@@ -24,31 +24,41 @@ def get_aux_path(input_path: Path) -> Path:
     return input_path.with_suffix(".aux")
 
 
-def scan_aux(aux: Path) -> (Set[Path], Set):
+def get_aux_bibdata(aux: Path) -> List[Path]:
     dir = aux.parent
     with open(aux) as f:
         txt = f.read()
-        bib_files = {
+        bib_files = [
             dir / f"{name}.bib" for name in set(re.findall(r"\\bibdata{([^}]+)}", txt))
-        }
+        ]
+
+    # make unique while preserving order
+    bib_files = list(dict.fromkeys(bib_files))
+    return bib_files
+
+
+def get_aux_citations(aux: Path) -> Set:
+    with open(aux) as f:
+        txt = f.read()
         citations = set(re.findall(r"\\citation{([^}]+)}", txt))
-    return bib_files, citations
+    return citations
 
 
 @contextmanager
-def replace_bib_files(bib_files: Set[Path], db: Dict):
+def replace_bib_files(bib_files: List[Path], db: Dict):
+    first = None
     for bib in bib_files:
         if bib.exists():
             with open(bib) as f:
                 db.update(load(f))
             bib.rename(bib.with_suffix(".bib-autobib-backup"))
-        os.mkfifo(bib)
-    yield
-    for bib in bib_files:
-        bib.unlink()
-        with open(bib, "w") as f:
-            if db:
-                dump(db, f)
-                db = {}
-            else:
+        if first is None:
+            first = bib
+            os.mkfifo(first)
+        else:
+            with open(bib, "w") as f:
                 f.write("")
+    yield
+    first.unlink()
+    with open(first, "w") as f:
+        dump(db, f)

@@ -18,10 +18,15 @@ def test_get_aux_path():
     assert util.get_aux_path(test_document_path / "main.tex") == aux_path
 
 
-def test_scan_aux():
-    bib_files, citations = util.scan_aux(aux_path)
+def test_get_aux_bibdata():
+    bib_files = util.get_aux_bibdata(aux_path)
 
-    assert bib_files == {test_document_path / "main.bib"}
+    assert bib_files == [test_document_path / "main.bib"]
+
+
+def test_get_aux_citations():
+    citations = util.get_aux_citations(aux_path)
+
     assert citations == {"Aab:2021zfr"}
 
 
