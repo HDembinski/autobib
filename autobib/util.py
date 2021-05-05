@@ -7,11 +7,8 @@ from bibtexparser.bibdatabase import BibDatabase
 import os
 
 
-def load(fo) -> Dict:
-    db = {}
-    for entry in bibtexparser.load(fo).entries:
-        db[entry["ID"]] = entry
-    return db
+def load(fo) -> List:
+    return bibtexparser.load(fo).entries
 
 
 def dump(entries, f):
@@ -63,18 +60,6 @@ def get_entry_online(key) -> Dict:
         "https://inspirehep.net/api/literature", params={"q": key, "format": "bibtex"}
     )
     return bibtexparser.loads(r.content).entries[0]
-
-
-def replace_bib_files(bib_files: List[Path]):
-    db = {}
-    for bib in bib_files:
-        if bib.exists():
-            with open(bib) as f:
-                db.update(load(f))
-    for bib in bib_files[1:]:
-        with open(bib, "w") as f:
-            f.write("")
-    return db
 
 
 def find_in_path(name):

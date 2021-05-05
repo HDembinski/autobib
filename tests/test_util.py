@@ -35,15 +35,3 @@ def test_get_entry_online():
 
     entry = util.get_entry_online(key)
     assert entry["collaboration"] == "Pierre Auger"
-
-
-def test_replace_bib_files(tmpdir):
-    bib = test_document_path / "main.bib"
-    with open(bib) as f:
-        db_ref = util.load(f)
-
-    shutil.copy(bib, tmpdir / "main.bib")
-    bib = Path(tmpdir / "main.bib")
-
-    db = util.replace_bib_files([bib])
-    assert db == db_ref
