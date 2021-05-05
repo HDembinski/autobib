@@ -45,10 +45,5 @@ def test_replace_bib_files(tmpdir):
     shutil.copy(bib, tmpdir / "main.bib")
     bib = Path(tmpdir / "main.bib")
 
-    autobib_backup = Path(tmpdir / "main.bib-autobib-backup")
-    assert not autobib_backup.exists()
-
-    db = util.replace_bib_files({bib})
-
+    db = util.replace_bib_files([bib])
     assert db == db_ref
-    assert autobib_backup.exists()

@@ -55,15 +55,11 @@ def get_entry_online(key) -> Dict:
 
 def replace_bib_files(bib_files: List[Path]):
     db = {}
-    first = None
     for bib in bib_files:
         if bib.exists():
             with open(bib) as f:
                 db.update(load(f))
-            bib.rename(bib.with_suffix(".bib-autobib-backup"))
-        if first is None:
-            first = bib
-        else:
-            with open(bib, "w") as f:
-                f.write("")
+    for bib in bib_files[1:]:
+        with open(bib, "w") as f:
+            f.write("")
     return db

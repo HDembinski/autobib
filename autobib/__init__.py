@@ -11,9 +11,10 @@ def main():
     parser.add_argument("auxfile", type=Path)
     args = parser.parse_args()
 
-    aux = args.auxfile.absolute()
+    aux = args.auxfile.with_suffix(".aux")
     assert aux.exists(), aux
 
+    # bibtex accepts filename without extension
     bib_files = util.get_aux_bibdata(aux)
 
     db = util.replace_bib_files(bib_files)
