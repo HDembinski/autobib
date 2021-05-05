@@ -10,5 +10,6 @@ def test_autobib(tmpdir):
     for fn in test_document_path.glob("*.*"):
         shutil.copy(fn, tmpdir)
 
-    p = subp.run(["autobib", tmpdir / "main.aux"])
+    subp.run(["latex", "main.tex"], cwd=tmpdir)
+    p = subp.run(["autobib", "main"], cwd=tmpdir)
     assert p.returncode == 0
