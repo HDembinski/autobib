@@ -21,14 +21,17 @@ def main():
     db = {}
     with util.replace_bib_files(bib_files, db):
         bib = bib_files[0]
-        while True:
-            t = aux.stat().st_mtime
-            if t > aux_time:
-                citations = util.get_aux_citations(aux)
-                for c in citations:
-                    if c not in db:
-                        db[c] = util.get_entry_online(c)
-                with open(bib, "w") as f:
-                    util.dump(db, f)
-                aux_time = t
-            time.sleep(0.1)
+        try:
+            while True:
+                t = aux.stat().st_mtime
+                if t > aux_time:
+                    citations = util.get_aux_citations(aux)
+                    for c in citations:
+                        if c not in db:
+                            db[c] = util.get_entry_online(c)
+                    with open(bib, "w") as f:
+                        util.dump(db, f)
+                    aux_time = t
+                time.sleep(0.1)
+        except KeyboardInterrupt:
+            pass
