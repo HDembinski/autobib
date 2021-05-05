@@ -6,7 +6,6 @@ def main():
     from pathlib import Path
     from . import util
     import subprocess as subp
-    import os
 
     parser = argparse.ArgumentParser()
     parser.add_argument("auxfile", type=Path)
@@ -29,14 +28,11 @@ def main():
         util.dump(db.values(), f)
 
     # now run original bibtex
-    for path in os.environ["PATH"].split(":"):
-        bibtex = None
-        for p in Path(os.path.expandvars(path)).glob("bibtex"):
-            assert bibtex is None
-            with open(p, "rb") as f:
-                if f.read(2) != b"#!":
-                    bibtex = p
-        if bibtex is not None:
-            break
-
+    bibtexs = util.find_in_path("bibtex")
+    assert len(bibtexs) > 1
+    for bibtex in bibtexs:
+        with open(bibtex, "rb") as f:
+            if f.read(2) == b"#!":
+                continue
+        break
     subp.run([bibtex, aux])

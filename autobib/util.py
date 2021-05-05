@@ -1,11 +1,23 @@
 from pathlib import Path
 import re
 from typing import Dict, Set, List
-from .load import load
-from .dump import dump
-from contextlib import contextmanager
 import requests
 import bibtexparser
+from bibtexparser.bibdatabase import BibDatabase
+import os
+
+
+def load(fo) -> Dict:
+    db = {}
+    for entry in bibtexparser.load(fo).entries:
+        db[entry["ID"]] = entry
+    return db
+
+
+def dump(entries, f):
+    bdb = BibDatabase()
+    bdb.entries = entries
+    bibtexparser.dump(bdb, f)
 
 
 def get_aux_path(input_path: Path) -> Path:
@@ -63,3 +75,17 @@ def replace_bib_files(bib_files: List[Path]):
         with open(bib, "w") as f:
             f.write("")
     return db
+
+
+def find_in_path(name):
+    paths = ["/bin", "/usr/bin", "/usr/local/bin"]
+    for path in os.environ["PATH"].split(":"):
+        path = os.path.expandvars(path)
+        paths.append(path)
+
+    results = []
+    for path in paths:
+        for p in Path(os.path.expandvars(path)).glob(name):
+            results.append(p)
+
+    return results

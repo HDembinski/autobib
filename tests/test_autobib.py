@@ -1,15 +1,14 @@
 import subprocess as subp
 import shutil
 from pathlib import Path
+from autobib.util import find_in_path
 import pytest
 
 cwd = Path(__file__).parent
 test_document_path = cwd / "data"
 
 
-@pytest.mark.skipif(
-    subp.run(["latex", "--version"]).returncode != 0, reason="requires latex"
-)
+@pytest.mark.skipif(not find_in_path("latex"), reason="requires latex")
 def test_autobib(tmpdir):
     shutil.copy(test_document_path / "main.tex", tmpdir / "main.tex")
 
