@@ -27,7 +27,7 @@ def test_get_aux_bibdata():
 def test_get_aux_citations():
     citations = util.get_aux_citations(aux_path)
 
-    assert citations == {"Aab:2021zfr"}
+    assert citations == {"Aab:2021zfr", "Dembinski:2018ihc", "Baur:2019cpv"}
 
 
 def test_get_entry_online():

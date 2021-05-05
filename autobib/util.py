@@ -50,8 +50,12 @@ def get_aux_bibdata(aux: Path) -> List[Path]:
 def get_aux_citations(aux: Path) -> Set:
     with open(aux) as f:
         txt = f.read()
-        citations = set(re.findall(r"\\citation{([^}]+)}", txt))
-    return citations
+        tmp = re.findall(r"\\citation{([^}]+)}", txt)
+    # split multi-citations
+    result = set()
+    for c in tmp:
+        result.update(c.split(","))
+    return result
 
 
 def get_entry_online(key) -> Dict:
