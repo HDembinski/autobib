@@ -48,10 +48,7 @@ def test_replace_bib_files(tmpdir):
     autobib_backup = Path(tmpdir / "main.bib-autobib-backup")
     assert not autobib_backup.exists()
 
-    with util.replace_bib_files({bib}, {}):
-        pass
+    db = util.replace_bib_files({bib})
 
+    assert db == db_ref
     assert autobib_backup.exists()
-
-    with open(bib) as f:
-        assert util.load(f) == db_ref

@@ -2,7 +2,7 @@ import bibtexparser
 from bibtexparser.bibdatabase import BibDatabase
 
 
-def dump(db, f):
+def dump(entries, f):
     bdb = BibDatabase()
-    bdb.entries = list(db.values())
+    bdb.entries = entries
     bibtexparser.dump(bdb, f)

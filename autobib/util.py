@@ -53,8 +53,8 @@ def get_entry_online(key) -> Dict:
     return bibtexparser.loads(r.content).entries[0]
 
 
-@contextmanager
-def replace_bib_files(bib_files: List[Path], db: Dict):
+def replace_bib_files(bib_files: List[Path]):
+    db = {}
     first = None
     for bib in bib_files:
         if bib.exists():
@@ -66,6 +66,4 @@ def replace_bib_files(bib_files: List[Path], db: Dict):
         else:
             with open(bib, "w") as f:
                 f.write("")
-    yield
-    with open(first, "w") as f:
-        dump(db, f)
+    return db
