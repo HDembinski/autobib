@@ -1,7 +1,6 @@
 from autobib import util
 from pathlib import Path
 import pytest
-import shutil
 
 cwd = Path(__file__).parent
 test_document_path = cwd / "data"
