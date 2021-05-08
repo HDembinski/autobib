@@ -20,6 +20,7 @@ def test_get_aux_keys():
     citations = util.get_aux_keys(aux_path)
 
     assert citations == {
+        "2020Univ....6..102M",
         "Vanthieghem:2021akb",
         "Baur:2019cpv",
         "Aab:2021zfr",
