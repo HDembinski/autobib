@@ -1,11 +1,11 @@
 from pathlib import Path
 import re
-from typing import Dict, Set, List
+from typing import Set, List
 import requests
 import os
 
 
-def get_bib_keys(txt) -> Set:
+def get_bib_keys(txt: str) -> Set[str]:
     return set(re.findall(r"@[a-zA-Z]+\{([^,]+),", txt))
 
 
@@ -20,7 +20,7 @@ def get_aux_bibdata(aux: Path) -> List[Path]:
     return [dir / f"{name}.bib" for name in dict.fromkeys(names)]
 
 
-def get_aux_keys(aux: Path) -> Set:
+def get_aux_keys(aux: Path) -> Set[str]:
     with open(aux) as f:
         txt = f.read()
     tmp = re.findall(r"\\citation{([^}]+)}", txt)
@@ -31,7 +31,7 @@ def get_aux_keys(aux: Path) -> Set:
     return result
 
 
-def get_entry_online(key) -> Dict:
+def get_entry_online(key: str) -> str:
     # https://github.com/inspirehep/rest-api-doc
     r = requests.get(
         "https://inspirehep.net/api/literature", params={"q": key, "format": "bibtex"}
@@ -41,7 +41,7 @@ def get_entry_online(key) -> Dict:
     return txt
 
 
-def find_in_path(name):
+def find_in_path(name: str) -> List[Path]:
     paths = ["/bin", "/usr/bin", "/usr/local/bin"]
     for path in os.environ["PATH"].split(":"):
         path = os.path.expandvars(path)

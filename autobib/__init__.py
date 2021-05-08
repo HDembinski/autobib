@@ -1,7 +1,7 @@
 __version__ = "0.3.1"
 
 
-def main():
+def main() -> int:
     import sys
     from pathlib import Path
     from . import util
@@ -9,7 +9,7 @@ def main():
 
     args = sys.argv[1:]
 
-    def log(x):
+    def log(x: str) -> None:
         print(f"autobib: {x}")
 
     print(f"autobib {__version__} called with args: {' '.join(args)}")
@@ -45,16 +45,18 @@ def main():
                         f.write("\n")
                         f.write(ref)
 
-    # now run original bibtex
+    # find original bibtex
     bibtexs = util.find_in_path("bibtex")
     assert len(bibtexs) > 1
     # check that we are first in path and skip all other instances of the bibtex script
     for i, bibtex in enumerate(bibtexs):
-        with open(bibtex, "rb") as f:
-            is_script = f.read(2) == b"#!"
+        with open(bibtex, "rb") as fb:
+            is_script = fb.read(2) == b"#!"
         if is_script:
             continue
         else:
             assert i > 0
             break
-    sys.exit(subp.run([bibtex] + args).returncode)
+
+    # run original bibtex
+    return subp.run([bibtex] + args).returncode  # type: ignore
