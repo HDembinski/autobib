@@ -1,10 +1,10 @@
 # autobib
 
-Automatically generate and manage a BibTeX file.
+Automatically download new entries for your bibliography file.
 
-`autobib` will automatically fetch citation keys from online repositories that were added to the LaTeX document but not yet to the `.bib` file. The automatically fetched entries are added to the local `.bib` file for the next run. For this to work, the citation key has to be the Inspire key.
+`autobib` automatically fetches BibTeX entries from online databases (currently restricted to Inspire) based on references that were added to the LaTeX document but not yet to the `.bib` file. The automatically fetched entries are appended to the first `.bib` file defined in your LaTeX source (first entry of `\bibliography{...}`). For this to work, the cite key has to be a key used by the online database.
 
-In essence, you still need to look up a citation online, but you don't have to add it twice, to your LaTeX document and to your `.bib` file. `autobib` does the latter for you.
+In other words, you still need to look up a citation online and copy the cite key to your LaTeX file, but you don't have to also copy the whole BibTeX entry to your local `.bib` file (essentially adding it twice), since `autobib` does the latter for you.
 
 ## Installation and usage
 
