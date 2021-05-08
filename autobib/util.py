@@ -2,49 +2,27 @@ from pathlib import Path
 import re
 from typing import Dict, Set, List
 import requests
-import bibtexparser
-from bibtexparser.bibdatabase import BibDatabase
+from .io import parse
 import os
 
 
-def load(fo) -> List:
-    return bibtexparser.load(fo).entries
+def load(f) -> Dict:
+    return parse(f.read())
 
 
-def dump(entries, f):
-    bdb = BibDatabase()
-    bdb.entries = entries
-    bibtexparser.dump(bdb, f)
-
-
-def get_aux_path(input_path: Path) -> Path:
-    if not input_path.exists():
-        raise ValueError(f"{input_path} does not exist")
-
-    if input_path.is_dir():
-        aux = None
-        for fn in input_path.glob("*.aux"):
-            if aux is not None:
-                raise ValueError("too many aux files in this directory")
-            aux = input_path / fn
-        if aux is None:
-            raise ValueError("no aux file in this directory")
-        return aux
-
-    return input_path.with_suffix(".aux")
+def dump(dict, f):
+    for entry in dict.values():
+        f.write(f"{entry}\n\n")
 
 
 def get_aux_bibdata(aux: Path) -> List[Path]:
-    dir = aux.parent
     with open(aux) as f:
-        txt = f.read()
-        bib_files = [
-            dir / f"{name}.bib" for name in set(re.findall(r"\\bibdata{([^}]+)}", txt))
-        ]
-
+        names = re.findall(r"\\bibdata{([^}]+)}", f.read())
+    # split comma-separated entries
+    names = sum((name.split(",") for name in names), [])
     # make unique while preserving order
-    bib_files = list(dict.fromkeys(bib_files))
-    return bib_files
+    dir = aux.parent
+    return [dir / f"{name}.bib" for name in dict.fromkeys(names)]
 
 
 def get_aux_citations(aux: Path) -> Set:
@@ -63,7 +41,7 @@ def get_entry_online(key) -> Dict:
     r = requests.get(
         "https://inspirehep.net/api/literature", params={"q": key, "format": "bibtex"}
     )
-    return bibtexparser.loads(r.content).entries[0]
+    return parse(r.content.decode())
 
 
 def find_in_path(name):

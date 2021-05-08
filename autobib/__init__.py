@@ -1,4 +1,4 @@
-__version__ = "0.1.5"
+__version__ = "0.2.0"
 
 
 def main():
@@ -21,25 +21,27 @@ def main():
             bib_files = util.get_aux_bibdata(aux)
             citations = util.get_aux_citations(aux)
 
-            main = []
-            all = []
+            main = {}
+            all = {}
             for bib in bib_files:
                 if bib.exists():
                     with open(bib) as f:
                         db = util.load(f)
                         if not main:
                             main = db
-                        all += db
+                        all.update(db)
 
             bib = bib_files[0]
 
-            unknown = citations - set(x["ID"] for x in all)
+            unknown = citations - set(all.keys())
 
             if unknown:
                 for c in unknown:
                     log(f"Fetching online: {c}")
-                    main.append(util.get_entry_online(c))
-
+                    ref = util.get_entry_online(c)
+                    if not ref:
+                        log(f"Warning: no entry found for '{c}'")
+                    main.update(ref)
                 # could be optimized so that only new entries are written
                 log(f"Writing {bib}")
                 with open(bib, "w") as f:
