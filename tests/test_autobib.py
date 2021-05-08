@@ -21,6 +21,6 @@ def test_autobib(tmpdir):
         assert get_bib_keys(f.read()) == {
             "Vanthieghem:2021akb",
             "Aab:2021zfr",
-            "Baur:2019cpv",
-            "Dembinski:2018ihc",
         }
+        # "Dembinski:2018ihc" is not in main.bib, because it is in foo.bib
+        # "Baur:2019cpv" is not in main.bib, because it is in bar.bib
