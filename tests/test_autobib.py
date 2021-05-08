@@ -24,3 +24,5 @@ def test_autobib(tmpdir):
         }
         # "Dembinski:2018ihc" is not in main.bib, because it is in foo.bib
         # "Baur:2019cpv" is not in main.bib, because it is in bar.bib
+
+    assert subp.run(["bibtex", "foobarbaz"], cwd=tmpdir).returncode != 0
