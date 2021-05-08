@@ -26,10 +26,10 @@ def main():
             for bib in bib_files:
                 if bib.exists():
                     with open(bib) as f:
-                        db = util.load(f)
+                        keys = util.get_bib_keys(f.read())
                         if main is None:
-                            main = db
-                        all |= db
+                            main = keys
+                        all |= keys
 
             unknown = citations - all
 
@@ -47,10 +47,13 @@ def main():
     # now run original bibtex
     bibtexs = util.find_in_path("bibtex")
     assert len(bibtexs) > 1
-    for bibtex in bibtexs:
+    # check that we are first in path and skip all other instances of the bibtex script
+    for i, bibtex in enumerate(bibtexs):
         with open(bibtex, "rb") as f:
-            if f.read(2) == b"#!":
-                continue
-        break
-
-    subp.run([bibtex] + args)
+            is_script = f.read(2) == b"#!"
+        if is_script:
+            continue
+        else:
+            assert i > 0
+            break
+    sys.exit(subp.run([bibtex] + args).returncode)

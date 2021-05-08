@@ -11,9 +11,10 @@ def get_bib_keys(txt) -> Set:
 
 def get_aux_bibdata(aux: Path) -> List[Path]:
     with open(aux) as f:
-        names = re.findall(r"\\bibdata{([^}]+)}", f.read())
+        # having more than one bibdata is an error
+        m = re.search(r"\\bibdata{([^}]+)}", f.read())
     # split comma-separated entries
-    names = sum((name.split(",") for name in names), [])
+    names = m.group(1).split(",") if m else []
     # make unique while preserving order
     dir = aux.parent
     return [dir / f"{name}.bib" for name in dict.fromkeys(names)]
@@ -22,12 +23,7 @@ def get_aux_bibdata(aux: Path) -> List[Path]:
 def get_aux_keys(aux: Path) -> Set:
     with open(aux) as f:
         txt = f.read()
-        tmp = re.findall(r"\\citation{([^}]+)}", txt)
-    # split multi-citations
-    result = set()
-    for c in tmp:
-        result.update(c.split(","))
-    return result
+    return set(re.findall(r"\\citation{([^}]+)}", txt))
 
 
 def get_entry_online(key) -> Dict:
