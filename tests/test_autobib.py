@@ -19,6 +19,7 @@ def test_autobib(tmpdir):
 
     with open(tmpdir / "main.bib") as f:
         assert get_bib_keys(f.read()) == {
+            "2020Univ....6..102M",
             "Vanthieghem:2021akb",
             "Aab:2021zfr",
         }

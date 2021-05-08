@@ -32,11 +32,36 @@ def get_aux_keys(aux: Path) -> Set[str]:
 
 
 def get_entry_online(key: str) -> str:
-    # https://github.com/inspirehep/rest-api-doc
-    r = requests.get(
-        "https://inspirehep.net/api/literature", params={"q": key, "format": "bibtex"}
-    )
-    txt = r.content.decode()
+    # Inspire and ADS keys are supported. ADS keys start with digits.
+    if re.match("[0-9]+", key):
+        # https://github.com/adsabs/adsabs-dev-api
+        token = os.environ.get("ADS_TOKEN", "")
+        if not token:
+            print(
+                "Key looks like ADS format, but the ADS_TOKEN environment variable "
+                "environment variable is not set. You need to follow these steps:\n"
+                "\n"
+                "1) Follow the instructions at "
+                "https://github.com/adsabs/adsabs-dev-api#access to get an API token.\n"
+                "2) Export the token in your shell as ADS_TOKEN with\n"
+                "      export ADS_TOKEN=<insert token here>"
+            )
+        r = requests.post(
+            "https://api.adsabs.harvard.edu/v1/export/bibtex",
+            data=f'{{"bibcode": ["{key}"]}}',
+            headers={
+                "Authorization": f"Bearer {token}",
+                "Content-Type": "application/json",
+            },
+        )
+        txt = r.json().get("export", "\n")[:-1]
+    else:
+        # https://github.com/inspirehep/rest-api-doc
+        r = requests.get(
+            "https://inspirehep.net/api/literature",
+            params={"q": key, "format": "bibtex"},
+        )
+        txt = r.content.decode()
     assert len(get_bib_keys(txt)) <= 1
     return txt
 
