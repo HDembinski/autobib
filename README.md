@@ -1,6 +1,8 @@
 # autobib
 
 ![PyPI](https://img.shields.io/pypi/v/autobib)
+![PyPI - License](https://img.shields.io/pypi/l/autobib)
+![PyPI - Status](https://img.shields.io/pypi/status/autobib)
 
 `autobib` automatically fetches BibTeX entries from online databases (currently restricted to Inspire) based on references that were added to the LaTeX document but not yet to the `.bib` file. The automatically fetched entries are appended to the first `.bib` file defined in your LaTeX source (first entry of `\bibliography{...}`). For this to work, the cite key has to be a key used by the online database.
 
