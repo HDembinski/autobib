@@ -54,7 +54,7 @@ def get_entry_online(key: str) -> str:
                 "Content-Type": "application/json",
             },
         )
-        txt = r.json().get("export", "")
+        txt = r.json().get("export", "\n")[:-1]
     else:
         # https://github.com/inspirehep/rest-api-doc
         r = requests.get(
