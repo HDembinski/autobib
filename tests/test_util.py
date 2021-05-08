@@ -12,8 +12,8 @@ def test_get_aux_bibdata():
     assert bib_files == [test_document_path / "main.bib"]
 
 
-def test_get_aux_citations():
-    citations = util.get_aux_citations(aux_path)
+def test_get_aux_keys():
+    citations = util.get_aux_keys(aux_path)
 
     assert citations == {"Aab:2021zfr", "Dembinski:2018ihc", "Baur:2019cpv"}
 
@@ -24,4 +24,4 @@ def test_get_entry_online():
     entry = util.get_entry_online(key)
     assert key in entry
 
-    assert util.get_entry_online("foobarbaz") == {}
+    assert util.get_entry_online("foobarbaz") == ""
