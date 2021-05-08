@@ -6,6 +6,8 @@ Automatically download new entries for your bibliography file.
 
 In other words, you still need to look up a citation online and copy the cite key to your LaTeX file, but you don't have to also copy the whole BibTeX entry to your local `.bib` file (essentially adding it twice), since `autobib` does the latter for you.
 
+`autobib` only appends new entries to your `.bib` file and otherwise leaves it as is. Using it is therefore safe.
+
 ## Installation and usage
 
 `pip install autobib`
