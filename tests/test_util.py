@@ -9,13 +9,22 @@ aux_path = test_document_path / "main.aux"
 def test_get_aux_bibdata():
     bib_files = util.get_aux_bibdata(aux_path)
 
-    assert bib_files == [test_document_path / "main.bib"]
+    assert bib_files == [
+        test_document_path / "main.bib",
+        test_document_path / "foo.bib",
+        test_document_path / "bar.bib",
+    ]
 
 
-def test_get_aux_citations():
-    citations = util.get_aux_citations(aux_path)
+def test_get_aux_keys():
+    citations = util.get_aux_keys(aux_path)
 
-    assert citations == {"Aab:2021zfr", "Dembinski:2018ihc", "Baur:2019cpv"}
+    assert citations == {
+        "Vanthieghem:2021akb",
+        "Baur:2019cpv",
+        "Aab:2021zfr",
+        "Dembinski:2018ihc",
+    }
 
 
 def test_get_entry_online():
@@ -24,4 +33,4 @@ def test_get_entry_online():
     entry = util.get_entry_online(key)
     assert key in entry
 
-    assert util.get_entry_online("foobarbaz") == {}
+    assert util.get_entry_online("foobarbaz") == ""

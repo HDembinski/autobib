@@ -1,4 +1,4 @@
-__version__ = "0.2.0"
+__version__ = "0.3.0"
 
 
 def main():
@@ -19,41 +19,42 @@ def main():
         if aux.exists():
             log(f"Found {aux}")
             bib_files = util.get_aux_bibdata(aux)
-            citations = util.get_aux_citations(aux)
+            citations = util.get_aux_keys(aux)
 
-            main = {}
-            all = {}
+            main = None
+            all = set()
             for bib in bib_files:
                 if bib.exists():
                     with open(bib) as f:
-                        db = util.load(f)
-                        if not main:
-                            main = db
-                        all.update(db)
+                        keys = util.get_bib_keys(f.read())
+                        if main is None:
+                            main = keys
+                        all |= keys
 
-            bib = bib_files[0]
-
-            unknown = citations - set(all.keys())
+            unknown = citations - all
 
             if unknown:
-                for c in unknown:
-                    log(f"Fetching online: {c}")
-                    ref = util.get_entry_online(c)
-                    if not ref:
-                        log(f"Warning: no entry found for '{c}'")
-                    main.update(ref)
-                # could be optimized so that only new entries are written
-                log(f"Writing {bib}")
-                with open(bib, "w") as f:
-                    util.dump(main, f)
+                bib = bib_files[0]
+                with open(bib, "a") as f:
+                    for c in unknown:
+                        log(f"Fetching online: {c}")
+                        ref = util.get_entry_online(c)
+                        if not ref:
+                            log(f"Warning: no entry found for '{c}'")
+                        log(f"Writing {c} to {bib}")
+                        f.write("\n")
+                        f.write(ref)
 
     # now run original bibtex
     bibtexs = util.find_in_path("bibtex")
     assert len(bibtexs) > 1
-    for bibtex in bibtexs:
+    # check that we are first in path and skip all other instances of the bibtex script
+    for i, bibtex in enumerate(bibtexs):
         with open(bibtex, "rb") as f:
-            if f.read(2) == b"#!":
-                continue
-        break
-
-    subp.run([bibtex] + args)
+            is_script = f.read(2) == b"#!"
+        if is_script:
+            continue
+        else:
+            assert i > 0
+            break
+    sys.exit(subp.run([bibtex] + args).returncode)
