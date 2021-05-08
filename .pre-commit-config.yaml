@@ -31,14 +31,6 @@ repos:
   - id: file-contents-sorter
   - id: trailing-whitespace
 
-- repo: local
-  hooks:
-  - id: version-check
-    name: version-check
-    language: python
-    additional_dependencies: [requests]
-    entry: python -c 'from tests.test_version import test_local_against_pypi_version; test_local_against_pypi_version()'
-
 # Python linter (Flake8)
 - repo: https://gitlab.com/pycqa/flake8
   rev: 3.9.0
