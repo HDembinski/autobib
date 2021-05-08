@@ -42,6 +42,7 @@ def main():
                         if not ref:
                             log(f"Warning: no entry found for '{c}'")
                         log(f"Writing {c} to {bib}")
+                        f.write("\n")
                         f.write(ref)
 
     # now run original bibtex
