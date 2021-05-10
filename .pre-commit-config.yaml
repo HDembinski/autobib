@@ -32,14 +32,14 @@ repos:
   - id: trailing-whitespace
 
 # Python linter (Flake8)
-- repo: https://gitlab.com/pycqa/flake8
-  rev: 3.9.0
+- repo: https://github.com/PyCQA/flake8
+  rev: 3.9.2
   hooks:
   - id: flake8
 
 # Python formatting
 - repo: https://github.com/psf/black
-  rev: 20.8b1
+  rev: 21.5b1
   hooks:
   - id: black
 
