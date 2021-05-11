@@ -25,3 +25,4 @@ No extra steps are needed to download from Inspire, but to download from ADS you
 ## Planned features
 
 - Smart-detect duplicates with some similarity metric, e.g. if the same paper is cited once using the adsabs key and once using the Inspire key
+- Support download of bibtex records from CDS?
