@@ -16,13 +16,13 @@ In other words, you still need to look up a citation online and copy the cite ke
 
 This installs a new script called `bibtex`, which is a drop-in replacement of the original `bibtex` command. The same name is chosen to make it work automatically with tooling like `latexmk`, which is otherwise hard to achieve.
 
-Make sure that the `bibtex` script installed by `autobib` is found first by shell lookup. The path where the script is located must come first in the search paths listed by `PATH`, before the original `bibtex`.
+Make sure that the `bibtex` script installed by `autobib` is found first by shell lookup (this should normally be the case). You can test that by calling `bibtex` on the command-line. You should see something like this
+```
+autobib 0.4.0 called with args:
+bibtex: Need exactly one file argument.
+```
+If this is not the case, then you may have to change the order of search paths in the `PATH` environment variable. The script installed by `autobib` must come before the path of the original `bibtex` command.
 
 ### ADS token
 
 No extra steps are needed to download from Inspire, but to download from ADS you need to [follow these instructions](https://github.com/adsabs/adsabs-dev-api#access) to get an API token. Export this token in your shell as ADS_TOKEN, e.g. `export ADS_TOKEN=<insert token here>`.
-
-## Planned features
-
-- Smart-detect duplicates with some similarity metric, e.g. if the same paper is cited once using the adsabs key and once using the Inspire key
-- Support download of bibtex records from CDS?
