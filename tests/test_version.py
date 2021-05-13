@@ -1,13 +1,17 @@
-import requests
+from urllib.request import urlopen
 from pkg_resources import parse_version
+import json
 
 
 def test_local_against_pypi_version():
     from autobib import __version__
 
-    # make sure version is up-to-date
-    pypi_versions = [
-        parse_version(v)
-        for v in requests.get("https://pypi.org/pypi/autobib/json").json()["releases"]
-    ]
-    assert parse_version(__version__) not in pypi_versions, "pypi version exists"
+    r = urlopen("https://pypi.org/pypi/autobib/json")
+    assert r.code == 200
+    payload = r.read()
+    releases = json.loads(payload)["releases"]
+
+    latest_pypi_version = max(parse_version(v) for v in releases)
+    assert (
+        parse_version(__version__) > latest_pypi_version
+    ), "PyPI release with same version number found, version needs to be incremented"

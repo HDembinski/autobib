@@ -48,3 +48,4 @@ repos:
   rev: 'v0.812'
   hooks:
   - id: mypy
+    args: ["--allow-redefinition"]
