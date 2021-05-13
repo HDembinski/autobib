@@ -16,10 +16,11 @@ In other words, you still need to look up a citation online and copy the cite ke
 
 This installs a new script called `bibtex`, which is a drop-in replacement of the original `bibtex` command. The same name is chosen to make it work automatically with tooling like `latexmk`, which is otherwise hard to achieve.
 
-Make sure that the `bibtex` script installed by `autobib` is found first by shell lookup (this should normally be the case). You can test that by calling `bibtex` on the command-line. You should see something like this
+Make sure that the `bibtex` script installed by `autobib` is found first by shell lookup (this should normally be the case). You can test that by calling `bibtex --version` on the command-line. You should see something like this
 ```
-autobib 0.4.0 called with args:
-bibtex: Need exactly one file argument.
+autobib 0.6.0
+BibTeX 0.99d (TeX Live 2020)
+[...]
 ```
 If this is not the case, then you may have to change the order of search paths in the `PATH` environment variable. The script installed by `autobib` must come before the path of the original `bibtex` command.
 
