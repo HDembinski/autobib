@@ -26,7 +26,6 @@ repos:
   - id: debug-statements
   - id: end-of-file-fixer
   - id: mixed-line-ending
-  - id: requirements-txt-fixer
   - id: sort-simple-yaml
   - id: file-contents-sorter
   - id: trailing-whitespace
@@ -48,4 +47,4 @@ repos:
   rev: 'v0.812'
   hooks:
   - id: mypy
-    args: ["--allow-redefinition"]
+    args: [--allow-redefinition, --ignore-missing-imports]
