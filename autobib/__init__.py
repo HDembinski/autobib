@@ -1,4 +1,4 @@
-__version__ = "0.5.0"
+__version__ = "0.6.0"
 
 
 def main() -> int:
@@ -12,7 +12,8 @@ def main() -> int:
     def log(x: str) -> None:
         print(f"autobib: {x}")
 
-    print(f"autobib {__version__} called with args: {' '.join(args)}")
+    if "--version" in args:
+        print(f"autobib {__version__}")
     if len(args) == 1:
         # bibtex accepts filename without extension
         aux = Path(args[0]).with_suffix(".aux")
