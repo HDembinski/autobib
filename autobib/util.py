@@ -1,8 +1,10 @@
 from pathlib import Path
 import re
 from typing import Set, List
-import requests
 import os
+import urllib.request
+import urllib.parse
+import json
 
 
 def get_bib_keys(txt: str) -> Set[str]:
@@ -46,24 +48,29 @@ def get_entry_online(key: str) -> str:
                 "2) Export the token in your shell as ADS_TOKEN with\n"
                 "      export ADS_TOKEN=<insert token here>"
             )
-        r = requests.post(
+        req = urllib.request.Request(
             "https://api.adsabs.harvard.edu/v1/export/bibtex",
-            data=f'{{"bibcode": ["{key}"]}}',
-            headers={
+            f'{{"bibcode": ["{key}"]}}'.encode("ascii"),
+            {
                 "Authorization": f"Bearer {token}",
                 "Content-Type": "application/json",
             },
         )
-        txt = r.json().get("export", "\n")[:-1]
+        try:
+            with urllib.request.urlopen(req) as r:
+                # do not check return code, we accept failure silently
+                bibdata = json.loads(r.read()).get("export", "\n")[:-1]
+        except urllib.error.HTTPError:
+            bibdata = ""
     else:
         # https://github.com/inspirehep/rest-api-doc
-        r = requests.get(
-            "https://inspirehep.net/api/literature",
-            params={"q": key, "format": "bibtex"},
-        )
-        txt = r.content.decode()
-    assert len(get_bib_keys(txt)) <= 1
-    return txt
+        data = urllib.parse.urlencode({"q": key, "format": "bibtex"})
+        req = urllib.request.Request(f"https://inspirehep.net/api/literature?{data}")
+        with urllib.request.urlopen(req) as r:
+            # do not check return code, we accept failure silently
+            bibdata = r.read().decode() if r.code == 200 else ""
+    assert len(get_bib_keys(bibdata)) <= 1
+    return bibdata
 
 
 def find_in_path(name: str) -> List[Path]:
