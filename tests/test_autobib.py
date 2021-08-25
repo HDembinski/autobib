@@ -49,8 +49,11 @@ def test_autobib_updated_key(tmpdir):
         f.write("")
 
     subp.run(["latex", "main.tex"], cwd=tmpdir)
+    assert (tmpdir / "main.aux").exists()
     p = subp.run(["bibtex", "main"], cwd=tmpdir, stderr=subp.PIPE)
     assert p.returncode == 1
+    # autobib deletes the aux file in this case, to force latex to re-create it next time
+    assert not (tmpdir / "main.aux").exists()
 
     with open(tmpdir / "main.bib") as f:
         assert get_bib_keys(f.read()) == {"CDF:1993wpv"}

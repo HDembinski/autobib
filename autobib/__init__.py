@@ -61,6 +61,8 @@ def main() -> int:
                 msg = ["Error: Keys need update in LaTeX document"]
                 for c, key in keys_need_update:
                     msg.append(f"  {c} -> {key}")
+                # delete the aux file, because it needs to be recreated in this case
+                aux.unlink()
                 raise SystemExit("\n".join(msg))
 
     # find original bibtex
