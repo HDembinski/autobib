@@ -29,7 +29,7 @@ def test_get_aux_keys():
 
 
 def test_get_entry_online_1():
-    key = "Aab:2021zfr"
+    key = "PierreAuger:2021qsd"
 
     entry = util.get_entry_online(key)
     assert key in entry

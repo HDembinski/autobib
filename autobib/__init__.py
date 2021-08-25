@@ -34,6 +34,9 @@ def main() -> int:
 
             unknown = citations - all
 
+            # Inspire is currently updating their keys. Entries are still found under
+            # the old key, but an entry with the new key is returned.
+            keys_need_update = []
             if unknown:
                 bib = bib_files[0]
                 with open(bib, "a") as f:
@@ -42,9 +45,23 @@ def main() -> int:
                         ref = util.get_entry_online(c)
                         if not ref:
                             log(f"Warning: no entry found for '{c}'")
+                            continue
+                        start = ref.find("{") + 1
+                        key = ref[start : ref.find(",", start)]
+                        if key != c:
+                            log(f"Warning: fetched key {key} differs from query {c}")
+                            keys_need_update.append((c, key))
+                            if key in all:  # already downloaded
+                                continue
                         log(f"Writing {c} to {bib}")
                         f.write("\n")
                         f.write(ref)
+
+            if keys_need_update:
+                msg = ["Error: Keys need update in LaTeX document"]
+                for c, key in keys_need_update:
+                    msg.append(f"  {c} -> {key}")
+                raise SystemExit("\n".join(msg))
 
     # find original bibtex
     bibtexs = util.find_in_path("bibtex")

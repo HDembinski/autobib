@@ -14,3 +14,4 @@ __pycache__
 *.fdb_latexmk
 *.fls
 *.synctex.gz
+autobib/_version.py
