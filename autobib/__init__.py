@@ -1,4 +1,4 @@
-__version__ = "0.6.0"
+from ._version import version as __version__  # noqa
 
 
 def main() -> int:
