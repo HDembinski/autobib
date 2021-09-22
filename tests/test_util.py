@@ -1,5 +1,6 @@
 from autobib import util
 from pathlib import Path
+import pytest
 
 cwd = Path(__file__).parent
 test_document_path = cwd / "data"
@@ -26,6 +27,11 @@ def test_get_aux_keys():
         "Aab:2021zfr",
         "Dembinski:2018ihc",
     }
+
+
+def test_get_aux_keys_bug():
+    with pytest.raises(ValueError):
+        util.get_aux_keys(test_document_path / "bug.aux")
 
 
 def test_get_entry_online_1():
