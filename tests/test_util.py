@@ -37,15 +37,13 @@ def test_get_aux_keys_bug():
 def test_get_entry_online_1():
     key = "PierreAuger:2021qsd"
 
-    entry = util.get_entry_online(key)
-    assert key in entry
+    key2, entry = util.get_entry_online(key)
+    assert key == key2
 
-    assert util.get_entry_online("foobarbaz") == ""
+    assert util.get_entry_online("foobarbaz") is None
 
 
 def test_get_entry_online_2():
     key = "2011ApJ...737..103S"
-    entry = util.get_entry_online(key)
-    assert key in entry
-
-    assert util.get_entry_online("123foobarbaz") == ""
+    key2, entry = util.get_entry_online(key)
+    assert key == key2

@@ -1,6 +1,6 @@
 from pathlib import Path
 import re
-from typing import Set, List
+from typing import Set, List, Tuple, Optional
 import os
 import urllib.request
 import urllib.parse
@@ -36,7 +36,7 @@ def get_aux_keys(aux: Path) -> Set[str]:
     return result
 
 
-def get_entry_online(key: str) -> str:
+def get_entry_online(key: str) -> Optional[Tuple[str, str]]:
     # Inspire and ADS keys are supported. ADS keys start with digits.
     if re.match("[0-9]+", key):
         # https://github.com/adsabs/adsabs-dev-api
@@ -73,11 +73,14 @@ def get_entry_online(key: str) -> str:
             # do not check return code, we accept failure silently
             bibdata = r.read().decode() if r.code == 200 else ""
     keys = get_bib_keys(bibdata)
-    if len(keys) > 1:
+    if not keys:
+        return None
+    if len(keys) > 1:  # this should never happen
         raise ValueError(
             f"{len(keys)} entries found for key {key!r}: '" + "' '".join(keys) + "'"
         )
-    return bibdata
+    (key,) = keys
+    return key, bibdata
 
 
 def find_in_path(name: str) -> List[Path]:

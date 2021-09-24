@@ -42,12 +42,11 @@ def main() -> int:
                 with open(bib, "a") as f:
                     for c in unknown:
                         log(f"Fetching online: {c}")
-                        ref = util.get_entry_online(c)
-                        if not ref:
+                        key_ref = util.get_entry_online(c)
+                        if key_ref is None:
                             log(f"Warning: no entry found for '{c}'")
                             continue
-                        start = ref.find("{") + 1
-                        key = ref[start : ref.find(",", start)]
+                        key, ref = key_ref
                         if key != c:
                             log(f"Warning: fetched key {key} differs from query {c}")
                             keys_need_update.append((c, key))
