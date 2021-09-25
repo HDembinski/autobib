@@ -32,35 +32,64 @@ def test_autobib(tmpdir):
 @pytest.mark.skipif(not find_in_path("latex"), reason="requires latex")
 def test_autobib_updated_key(tmpdir):
     # test renamed key Abe:1993xy -> CDF:1993wpv
-
-    with (tmpdir / "main.tex").open("w") as f:
-        f.write(
-            r"""
-\documentclass{article}
+    tex = r"""\documentclass{article}
 \begin{document}
 \cite{Abe:1993xy}
 \bibliographystyle{plain}
 \bibliography{main}
 \end{document}
 """
-        )
 
-    with (tmpdir / "main.bib").open("w") as f:
-        f.write("")
+    with (tmpdir / "main.tex").open("w") as f:
+        f.write(tex)
 
     subp.run(["latex", "main.tex"], cwd=tmpdir)
     assert (tmpdir / "main.aux").exists()
-    p = subp.run(["bibtex", "main"], cwd=tmpdir, stderr=subp.PIPE)
-    assert p.returncode == 1
-    # autobib deletes the aux file in this case, to force latex to re-create it next time
-    assert not (tmpdir / "main.aux").exists()
+
+    p = subp.run(["bibtex", "main"], cwd=tmpdir, stdout=subp.PIPE)
 
     with open(tmpdir / "main.bib") as f:
         assert get_bib_keys(f.read()) == {"CDF:1993wpv"}
 
+    with open(tmpdir / "main.tex.bak") as f:
+        assert f.read() == tex
+
+    with open(tmpdir / "main.tex") as f:
+        assert f.read() == tex.replace("Abe:1993xy", "CDF:1993wpv")
+
     assert (
-        b"""Error: Keys need update in LaTeX document
-  Abe:1993xy -> CDF:1993wpv
+        b"""autobib: Updating keys in LaTeX files
+autobib:   Abe:1993xy -> CDF:1993wpv
 """
-        in p.stderr
+        in p.stdout
     )
+
+
+@pytest.mark.skipif(not find_in_path("latex"), reason="requires latex")
+def test_autobib_backup_failure(tmpdir):
+    tex = r"""\documentclass{article}
+\begin{document}
+\cite{Abe:1993xy}
+\bibliographystyle{plain}
+\bibliography{main}
+\end{document}
+"""
+    with (tmpdir / "main.tex").open("w") as f:
+        f.write(tex)
+
+    subp.run(["latex", "main.tex"], cwd=tmpdir)
+    assert (tmpdir / "main.aux").exists()
+
+    with (tmpdir / "main.aux").open() as f:
+        aux = f.read()
+
+    p = subp.run(["bibtex", "main"], cwd=tmpdir)
+    assert p.returncode == 0
+    assert (tmpdir / "main.tex.bak").exists()
+
+    for i in range(3):
+        with open(tmpdir / "main.aux", "w") as f:
+            f.write(aux)
+        p = subp.run(["bibtex", "main"], cwd=tmpdir)
+        assert (tmpdir / f"main.tex.bak.{i}").exists()
+        assert p.returncode == 0

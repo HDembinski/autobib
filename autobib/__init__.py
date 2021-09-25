@@ -41,28 +41,47 @@ def main() -> int:
                 bib = bib_files[0]
                 with open(bib, "a") as f:
                     for c in unknown:
-                        log(f"Fetching online: {c}")
+                        log(f"Fetching key online: {c}")
                         key_ref = util.get_entry_online(c)
                         if key_ref is None:
                             log(f"Warning: no entry found for '{c}'")
                             continue
                         key, ref = key_ref
                         if key != c:
-                            log(f"Warning: fetched key {key} differs from query {c}")
+                            log(f"  Fetched key {key} differs")
                             keys_need_update.append((c, key))
                             if key in all:  # already downloaded
                                 continue
-                        log(f"Writing {c} to {bib}")
+                        log(f"Writing {key} to {bib}")
                         f.write("\n")
                         f.write(ref)
 
             if keys_need_update:
-                msg = ["Error: Keys need update in LaTeX document"]
-                for c, key in keys_need_update:
-                    msg.append(f"  {c} -> {key}")
-                # delete the aux file, because it needs to be recreated in this case
-                aux.unlink()
-                raise SystemExit("\n".join(msg))
+                log("Updating keys in LaTeX files")
+                for fr, to in keys_need_update:
+                    log(f"  {fr} -> {to}")
+                tex = aux.with_suffix(".tex")
+                assert tex.exists()
+                with open(tex) as f:
+                    t = f.read()
+                with open(aux) as f:
+                    a = f.read()
+                bak = tex.with_suffix(".tex.bak")
+                for i in range(100):
+                    if not bak.exists():
+                        break
+                    bak = tex.with_suffix(f".tex.bak.{i}")
+                else:
+                    raise IOError("could not create backup of tex file")
+                with open(bak, "w") as f:
+                    f.write(t)
+                for fr, to in keys_need_update:
+                    t = t.replace(fr, to)
+                    a = a.replace(fr, to)
+                with open(tex, "w") as f:
+                    f.write(t)
+                with open(aux, "w") as f:
+                    f.write(a)
 
     # find original bibtex
     bibtexs = util.find_in_path("bibtex")
