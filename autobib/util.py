@@ -8,7 +8,7 @@ import json
 
 
 def get_bib_keys(txt: str) -> Set[str]:
-    return set(re.findall(r"@[a-zA-Z]+\{ *([^,\n\"]+) *,", txt))
+    return set(re.findall(r"@[a-zA-Z]+\{ *([^,\}\n\"]+) *[,\}]", txt))
 
 
 def get_aux_bibdata(aux: Path) -> List[Path]:

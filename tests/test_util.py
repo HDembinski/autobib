@@ -16,6 +16,8 @@ def test_get_bib_keys():
         "Dembinski:2017kpa",
         "2001ICRC....3..985D",
         "Arnold2009",
+        "REVTEX42Control",
+        "apsrev42Control",
     }
 
 
