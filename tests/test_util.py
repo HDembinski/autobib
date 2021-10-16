@@ -7,6 +7,18 @@ test_document_path = cwd / "data"
 aux_path = test_document_path / "main.aux"
 
 
+def test_get_bib_keys():
+    with open(test_document_path / "main.bib") as f:
+        keys = util.get_bib_keys(f.read())
+
+    assert set(keys) == {
+        "PierreAuger:2021qsd",
+        "Dembinski:2017kpa",
+        "2001ICRC....3..985D",
+        "Arnold2009",
+    }
+
+
 def test_get_aux_bibdata():
     bib_files = util.get_aux_bibdata(aux_path)
 

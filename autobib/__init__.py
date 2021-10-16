@@ -14,20 +14,32 @@ def main() -> int:
 
     if "--version" in args:
         print(f"autobib {__version__}")
+    debug = "--debug" in args
+    if debug:
+        args.remove("--debug")
+
     if len(args) == 1:
         # bibtex accepts filename without extension
         aux = Path(args[0]).with_suffix(".aux")
         if aux.exists():
-            log(f"Found {aux}")
             bib_files = util.get_aux_bibdata(aux)
             citations = util.get_aux_keys(aux)
-
+            if debug:
+                log(f"Found aux: {aux}")
+                log("Found bib: " + " ".join(str(x) for x in bib_files))
+                log("Found citations:")
+                for x in sorted(citations):
+                    log(f"  {x}")
             main = None
             all = set()
             for bib in bib_files:
                 if bib.exists():
                     with open(bib) as f:
                         keys = util.get_bib_keys(f.read())
+                        if debug:
+                            log(f"Entries in {bib}:")
+                            for x in sorted(keys):
+                                log(f"  {x}")
                         if main is None:
                             main = keys
                         all |= keys
