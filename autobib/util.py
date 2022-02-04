@@ -7,8 +7,21 @@ import urllib.parse
 import json
 
 
-def get_bib_keys(txt: str) -> Set[str]:
-    return set(re.findall(r"@[a-zA-Z]+\{ *([^,\}\n\"]+) *[,\}]", txt))
+class Key(str):
+    """String with case-insensitive comparison."""
+
+    def __eq__(self, other):
+        return self.casefold() == other.casefold()
+
+    def __neq__(self, other):
+        return not self.__eq__(other)
+
+    def __hash__(self):
+        return self.casefold().__hash__()
+
+
+def get_bib_keys(txt: str) -> Set[Key]:
+    return set(Key(si) for si in re.findall(r"@[a-zA-Z]+\{ *([^,\}\n\"]+) *[,\}]", txt))
 
 
 def get_aux_bibdata(aux: Path) -> List[Path]:
@@ -22,7 +35,7 @@ def get_aux_bibdata(aux: Path) -> List[Path]:
     return [dir / f"{name}.bib" for name in dict.fromkeys(names)]
 
 
-def get_aux_keys(aux: Path) -> Set[str]:
+def get_aux_keys(aux: Path) -> Set[Key]:
     with open(aux) as f:
         txt = f.read()
     tmp = re.findall(r"\\citation{([^}]+)}", txt)
@@ -32,11 +45,11 @@ def get_aux_keys(aux: Path) -> Set[str]:
         s = c.split(",")
         if any(len(si) == 0 for si in s):
             raise ValueError(f"Syntax error in citation: {c}")
-        result.update(s)
+        result.update([Key(si) for si in s])
     return result
 
 
-def get_entry_online(key: str) -> Optional[Tuple[str, str]]:
+def get_entry_online(key: Key) -> Optional[Tuple[Key, str]]:
     # Inspire and ADS keys are supported. ADS keys start with digits.
     if re.match("[0-9]+", key):
         # https://github.com/adsabs/adsabs-dev-api
@@ -73,14 +86,14 @@ def get_entry_online(key: str) -> Optional[Tuple[str, str]]:
             # do not check return code, we accept failure silently
             bibdata = r.read().decode() if r.code == 200 else ""
     keys = get_bib_keys(bibdata)
-    if not keys:
-        return None
-    if len(keys) > 1:  # this should never happen
-        raise ValueError(
-            f"{len(keys)} entries found for key {key!r}: '" + "' '".join(keys) + "'"
-        )
-    (key,) = keys
-    return key, bibdata
+    if keys:
+        if len(keys) > 1:  # this should never happen
+            raise ValueError(
+                f"{len(keys)} entries found for key {key!r}: '" + "' '".join(keys) + "'"
+            )
+        (key,) = keys
+        return key, bibdata
+    return None
 
 
 def find_in_path(name: str) -> List[Path]:

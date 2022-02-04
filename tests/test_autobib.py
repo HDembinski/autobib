@@ -1,7 +1,7 @@
 import subprocess as subp
 import shutil
 from pathlib import Path
-from autobib.util import find_in_path, get_bib_keys
+from autobib.util import find_in_path, get_bib_keys, Key
 import pytest
 
 cwd = Path(__file__).parent
@@ -19,9 +19,12 @@ def test_autobib(tmpdir):
 
     with open(tmpdir / "main.bib") as f:
         assert get_bib_keys(f.read()) == {
-            "2020Univ....6..102M",
-            "Vanthieghem:2021akb",
-            "PierreAuger:2021qsd",
+            Key(s)
+            for s in (
+                "2020Univ....6..102M",
+                "Vanthieghem:2021akb",
+                "PierreAuger:2021qsd",
+            )
         }
         # "Dembinski:2018ihc" is not in main.bib, because it is in foo.bib
         # "Baur:2019cpv" is not in main.bib, because it is in bar.bib
@@ -49,7 +52,7 @@ def test_autobib_updated_key(tmpdir):
     p = subp.run(["bibtex", "main"], cwd=tmpdir, stdout=subp.PIPE)
 
     with open(tmpdir / "main.bib") as f:
-        assert get_bib_keys(f.read()) == {"CDF:1993wpv"}
+        assert get_bib_keys(f.read()) == {Key("CDF:1993wpv")}
 
     with open(tmpdir / "main.tex.bak") as f:
         assert f.read() == tex
