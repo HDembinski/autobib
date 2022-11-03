@@ -18,7 +18,7 @@ This installs a new script called `bibtex-autobib`, which is a drop-in replaceme
 
 `ln -s /path/to/bibtex-autobib /some/path/bibtex`
 
-where `/some/path/bibtex` comes before the original `bibtex` command in the PATH environment variable. Be careful that you do not override the original `bibtex` command.
+where `/some/path/bibtex` comes before the path in which the original `bibtex` command is located in the PATH environment variable. Be careful that you do not override the original `bibtex` command.
 
 After doing that, you can check whether the command `bibtex` is calling `autobib` by calling `bibtex --version` on the command-line. You should see something like this
 ```
