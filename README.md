@@ -14,15 +14,15 @@ In other words, you still need to look up a citation online and copy the cite ke
 
 `pip install autobib`
 
-This installs a new script called `bibtex`, which is a drop-in replacement of the original `bibtex` command. The same name is chosen to make it work automatically with tooling like `latexmk`, which is otherwise hard to achieve.
+This installs a new script called `bibtex-autobib`, which is a drop-in replacement of the original `bibtex` command. The easiest way to make it work automatically with tooling like `latexmk` is to create a symlink `ln -s /path/to/bibtex-autobib /some/path/bibtex` where `/some/path/bibtex` comes before the original `bibtex` command in the PATH environment variable. Be careful that you do not override the original `bibtex` command.
 
-Make sure that the `bibtex` script installed by `autobib` is found first by shell lookup (this should normally be the case). You can test that by calling `bibtex --version` on the command-line. You should see something like this
+After doing that, you can check whether the command `bibtex` is calling `autobib` by calling `bibtex --version` on the command-line. You should see something like this
 ```
 autobib 0.6.0
 BibTeX 0.99d (TeX Live 2020)
 [...]
 ```
-If this is not the case, then you may have to change the order of search paths in the `PATH` environment variable. The script installed by `autobib` must come before the path of the original `bibtex` command.
+If this is not the case, then you may have to change the order of search paths in the `PATH` environment variable.
 
 ### ADS token
 
