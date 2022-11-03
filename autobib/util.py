@@ -96,15 +96,23 @@ def get_entry_online(key: Key) -> Optional[Tuple[Key, str]]:
     return None
 
 
-def find_in_path(name: str) -> List[Path]:
-    paths = ["/bin", "/usr/bin", "/usr/local/bin"]
+def find_in_path(name: str) -> List[str]:
+    paths = []
     for path in os.environ["PATH"].split(":"):
         path = os.path.expandvars(path)
-        paths.append(path)
+        paths.append(Path(path))
 
     results = []
     for path in paths:
-        for p in Path(os.path.expandvars(path)).glob(name):
+        for p in path.glob(name):
             results.append(p)
 
-    return results
+    return [str(s) for s in results]
+
+
+def get_original_bibtex(bibtexs: List[str]) -> str:
+    for bibtex in bibtexs:
+        with open(bibtex, "rb") as f:
+            if f.read(2) != b"#!":
+                return bibtex
+    return ""

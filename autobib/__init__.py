@@ -95,18 +95,28 @@ def main() -> int:
                 with open(aux, "w") as f:
                     f.write(a)
 
+    if (
+        len(sys.argv) == 2
+        and sys.argv[1] == "--help"
+        and sys.argv[0].endswith("bibtex-autobib")
+    ):
+        msg = """\
+autobib: The easiest way to use bibtex-autobib is to create a link
+
+    ln -s /path/to/bibtex-autobib /some/path/bibtex
+
+where /some/path must appear in the PATH environment variable
+before the original bibtex.
+"""
+        print(msg)
+
     # find original bibtex
     bibtexs = util.find_in_path("bibtex")
-    assert len(bibtexs) > 1
-    # check that we are first in path and skip all other instances of the bibtex script
-    for i, bibtex in enumerate(bibtexs):
-        with open(bibtex, "rb") as fb:
-            is_script = fb.read(2) == b"#!"
-        if is_script:
-            continue
-        else:
-            assert i > 0
-            break
-
+    bibtex = util.get_original_bibtex(bibtexs)
+    if not bibtex:
+        raise SystemExit(
+            """\
+bibtex was not found on this system. You need to install bibtex to use autobib."""
+        )
     # run original bibtex
     return subp.run([bibtex] + args).returncode  # type: ignore
