@@ -30,9 +30,16 @@ def get_aux_bibdata(aux: Path) -> List[Path]:
         m = re.search(r"\\bibdata{([^}]+)}", f.read())
     # split comma-separated entries
     names = m.group(1).split(",") if m else []
-    # make unique while preserving order
-    dir = aux.parent
-    return [dir / f"{name}.bib" for name in dict.fromkeys(names)]
+    pdir = aux.parent
+    files = []
+    for name in names:
+        if name.endswith(".bib"):
+            fn = pdir / name
+        else:
+            fn = pdir / f"{name}.bib"
+        if fn not in files:
+            files.append(fn)
+    return files
 
 
 def get_aux_keys(aux: Path) -> Set[Key]:
