@@ -16,3 +16,5 @@ __pycache__
 *.synctex.gz
 autobib/_version.py
 .vscode
+.mypy_cache
+.pytype

@@ -37,7 +37,7 @@ def main() -> int:
                     with open(bib) as f:
                         keys = util.get_bib_keys(f.read())
                         if debug:
-                            log(f"Entries in {bib}:")
+                            log(f"Entries in {bib}:")  # noqa
                             for x in sorted(keys):
                                 log(f"  {x}")
                         if main is None:
@@ -108,7 +108,7 @@ autobib: The easiest way to use bibtex-autobib is to create a link
 where /some/path must appear in the PATH environment variable
 before the original bibtex.
 """
-        print(msg)
+        log(msg)
 
     # find original bibtex
     bibtexs = util.find_in_path("bibtex")
