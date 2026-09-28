@@ -60,12 +60,9 @@ def test_autobib_updated_key(tmpdir):
     with open(tmpdir / "main.tex") as f:
         assert f.read() == tex.replace("Abe:1993xy", "CDF:1993wpv")
 
-    assert (
-        b"""autobib: Updating keys in LaTeX files
+    assert b"""autobib: Updating keys in LaTeX files
 autobib:   Abe:1993xy -> CDF:1993wpv
-"""
-        in p.stdout
-    )
+""" in p.stdout
 
 
 @pytest.mark.skipif(not find_in_path("latex"), reason="requires latex")
