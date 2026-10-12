@@ -114,9 +114,7 @@ before the original bibtex.
     bibtexs = util.find_in_path("bibtex")
     bibtex = util.get_original_bibtex(bibtexs)
     if not bibtex:
-        raise SystemExit(
-            """\
-bibtex was not found on this system. You need to install bibtex to use autobib."""
-        )
+        raise SystemExit("""\
+bibtex was not found on this system. You need to install bibtex to use autobib.""")
     # run original bibtex
     return subp.run([bibtex] + args).returncode  # type: ignore
